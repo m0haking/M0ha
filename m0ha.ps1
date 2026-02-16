@@ -1,18 +1,15 @@
 # ==========================================
-# Tool: YouTube Handle Generator & Checker
+# Tool: YouTube Handle Master
 # Developer: m0ha
-# Version: 2.0
+# Version: 3.0
 # ==========================================
 
 function Show-Header {
     Clear-Host
-    $header = @"
-======================================
-    YOUTUBE TOOL BY m0ha [v2.0]
-    GENERATE & CHECK HANDLES
-======================================
-"@
-    Write-Host $header -ForegroundColor Cyan
+    Write-Host "======================================" -ForegroundColor Cyan
+    Write-Host "    YOUTUBE TOOL BY m0ha [v1.0]       " -ForegroundColor Magenta
+    Write-Host "    GENERATE & CHECK HANDLES          " -ForegroundColor Yellow
+    Write-Host "======================================" -ForegroundColor Cyan
 }
 
 function Generate-User($length) {
@@ -27,14 +24,13 @@ function Generate-User($length) {
 function Check-User($user) {
     $url = "https://www.youtube.com/@$user"
     try {
-        # فحص الرابط بدون تتبع التحويل لضمان الدقة 100%
+        # استخدام Invoke-WebRequest لفحص دقيق للحالة 404
         $request = Invoke-WebRequest -Uri $url -Method Get -ErrorAction Stop -MaximumRedirection 0
         Write-Host "[-] @$user -> مأخوذ (Taken)" -ForegroundColor Red
     }
     catch {
         if ($_.Exception.Response.StatusCode -eq "NotFound") {
             Write-Host "[+] @$user -> متاح (Available) !!!" -ForegroundColor Green
-            # حفظ المتاح في ملف نصي تلقائياً
             "@$user" | Out-File -FilePath "available_m0ha.txt" -Append
         }
         else {
@@ -43,23 +39,20 @@ function Check-User($user) {
     }
 }
 
-# --- تشغيل البرنامج ---
+# --- البرنامج الرئيسي ---
 Show-Header
 
-$length = Read-Host "أدخل طول اليوزر (مثلاً 4 أو 5)"
-$count = Read-Host "كم عدد اليوزرات التي تريد توليدها وفحصها؟"
+$len = Read-Host "أدخل طول اليوزر المطلوب (مثلاً 4)"
+$num = Read-Host "كم عدد اليوزرات التي تريد فحصها؟"
 
-Write-Host "`n[!] جاري العمل.. سيتم حفظ المتاح في ملف available_m0ha.txt`n" -ForegroundColor Cyan
+Write-Host "`n[!] جاري الفحص.. المتاح سيُحفظ في available_m0ha.txt`n" -ForegroundColor Cyan
 
-for ($i = 1; $i -le $count; $i++) {
-    $randomUser = Generate-User -length $length
+for ($i = 1; $i -le $num; $i++) {
+    $randomUser = Generate-User -length $len
     Check-User -user $randomUser
-    
-    # تأخير بسيط (نصف ثانية) لتجنب حظر الآي بي من يوتيوب
-    Start-Sleep -Milliseconds 500
+    # تأخير 600 مللي ثانية لتفادي الحظر
+    Start-Sleep -Milliseconds 600
 }
 
-Write-Host "`n======================================" -ForegroundColor Cyan
-Write-Host "تم الانتهاء! شكراً لاستخدام أداة m0ha" -ForegroundColor Magenta
-Write-Host "======================================" -ForegroundColor Cyan
+Write-Host "`nتم الانتهاء! شكراً لثقتك ببرمجيات m0ha" -ForegroundColor Magenta
 Pause
