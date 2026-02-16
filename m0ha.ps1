@@ -1,9 +1,3 @@
-# ==========================================
-# Tool: YouTube Handle Master
-# Developer: m0ha
-# Version: 3.0
-# ==========================================
-
 function Show-Header {
     Clear-Host
     Write-Host "======================================" -ForegroundColor Cyan
@@ -24,35 +18,31 @@ function Generate-User($length) {
 function Check-User($user) {
     $url = "https://www.youtube.com/@$user"
     try {
-        # استخدام Invoke-WebRequest لفحص دقيق للحالة 404
         $request = Invoke-WebRequest -Uri $url -Method Get -ErrorAction Stop -MaximumRedirection 0
-        Write-Host "[-] @$user -> مأخوذ (Taken)" -ForegroundColor Red
+        Write-Host "[-] @$user -> TAKEN" -ForegroundColor Red
     }
     catch {
         if ($_.Exception.Response.StatusCode -eq "NotFound") {
-            Write-Host "[+] @$user -> متاح (Available) !!!" -ForegroundColor Green
+            Write-Host "[+] @$user -> AVAILABLE !!!" -ForegroundColor Green
             "@$user" | Out-File -FilePath "available_m0ha.txt" -Append
         }
         else {
-            Write-Host "[!] @$user -> خطأ في الشبكة" -ForegroundColor Yellow
+            Write-Host "[!] @$user -> CONNECTION ERROR" -ForegroundColor Yellow
         }
     }
 }
 
-# --- البرنامج الرئيسي ---
 Show-Header
+$len = Read-Host "Enter handle length (e.g. 4)"
+$num = Read-Host "How many handles to check?"
 
-$len = Read-Host "أدخل طول اليوزر المطلوب (مثلاً 4)"
-$num = Read-Host "كم عدد اليوزرات التي تريد فحصها؟"
-
-Write-Host "`n[!] جاري الفحص.. المتاح سيُحفظ في available_m0ha.txt`n" -ForegroundColor Cyan
+Write-Host "`n[!] Checking... Saved to available_m0ha.txt`n" -ForegroundColor Cyan
 
 for ($i = 1; $i -le $num; $i++) {
     $randomUser = Generate-User -length $len
     Check-User -user $randomUser
-    # تأخير 600 مللي ثانية لتفادي الحظر
     Start-Sleep -Milliseconds 600
 }
 
-Write-Host "`nتم الانتهاء! شكراً لثقتك ببرمجيات m0ha" -ForegroundColor Magenta
+Write-Host "`nDONE! Thank you for using m0ha tool." -ForegroundColor Magenta
 Pause
