@@ -1,7 +1,7 @@
 function Show-Header {
     Clear-Host
     Write-Host "======================================" -ForegroundColor Cyan
-    Write-Host "    YOUTUBE TOOL BY m0ha [v1.0]       " -ForegroundColor Magenta
+    Write-Host "    YOUTUBE TOOL BY m0ha [v3.0]       " -ForegroundColor Magenta
     Write-Host "    GENERATE & CHECK HANDLES          " -ForegroundColor Yellow
     Write-Host "======================================" -ForegroundColor Cyan
 }
@@ -17,14 +17,15 @@ function Generate-User($length) {
 
 function Check-User($user) {
     $url = "https://www.youtube.com/@$user"
+    $desktopPath = [System.IO.Path]::Combine($env:USERPROFILE, "Desktop", "available_m0ha.txt")
     try {
-        $request = Invoke-WebRequest -Uri $url -Method Get -ErrorAction Stop -MaximumRedirection 0
+        $request = Invoke-WebRequest -Uri $url -Method Get -ErrorAction Stop -MaximumRedirection 0 -UseBasicParsing
         Write-Host "[-] @$user -> TAKEN" -ForegroundColor Red
     }
     catch {
         if ($_.Exception.Response.StatusCode -eq "NotFound") {
             Write-Host "[+] @$user -> AVAILABLE !!!" -ForegroundColor Green
-            "@$user" | Out-File -FilePath "available_m0ha.txt" -Append
+            "@$user" | Out-File -FilePath $desktopPath -Append
         }
         else {
             Write-Host "[!] @$user -> CONNECTION ERROR" -ForegroundColor Yellow
@@ -36,7 +37,7 @@ Show-Header
 $len = Read-Host "Enter handle length (e.g. 4)"
 $num = Read-Host "How many handles to check?"
 
-Write-Host "`n[!] Checking... Saved to available_m0ha.txt`n" -ForegroundColor Cyan
+Write-Host "`n[!] Checking... Hits saved to your Desktop`n" -ForegroundColor Cyan
 
 for ($i = 1; $i -le $num; $i++) {
     $randomUser = Generate-User -length $len
@@ -44,5 +45,5 @@ for ($i = 1; $i -le $num; $i++) {
     Start-Sleep -Milliseconds 600
 }
 
-Write-Host "`nDONE! Thank you for using m0ha tool." -ForegroundColor Magenta
+Write-Host "`nDONE! Check available_m0ha.txt on your Desktop." -ForegroundColor Magenta
 Pause
